@@ -22,6 +22,10 @@ class HistogramsUniformised:
     def make_distribution(self) -> Distribution:
         raise NotImplementedError
 
+    def create_x_array(self) -> np.ndarray:
+        nb_histograms = self.y.shape[0]
+        return np.asarray(list(range(0, self.x_max + 1)) * nb_histograms, dtype=int).reshape((nb_histograms, self.x_max + 1) )
+
 
 class Uniformise:
     @staticmethod

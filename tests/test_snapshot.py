@@ -18,10 +18,12 @@ def test_uniformise_already_uniformised():
     histograms = [snapshot.Histogram({0: 10, 1: 2}), snapshot.Histogram({0: 1, 1: 1})]
     expected_x_max = 1
     expected_y = np.array([[10, 2], [1, 1]], dtype=int)
+    excepted_x = np.array([[0, 1] * 2]).reshape(2, 2)
 
     result = snapshot.Uniformise.uniformise_histograms(histograms)
     assert result.x_max == expected_x_max
     assert np.testing.assert_array_equal(result.y, expected_y) is None
+    assert np.testing.assert_array_equal(result.create_x_array(), excepted_x) is None
 
 
 def test_uniformise():
@@ -32,7 +34,9 @@ def test_uniformise():
     expected_y[0, -2] = 10
     expected_y[1, 0] = 1
     expected_y[1, 1] = 1
+    excepted_x = np.array(list(range(0, 12)) * 2).reshape(2, 12)
 
     result = snapshot.Uniformise.uniformise_histograms(histograms)
     assert result.x_max == expected_x_max
     assert np.testing.assert_array_equal(result.y, expected_y) is None
+    assert np.testing.assert_array_equal(result.create_x_array(), excepted_x) is None
