@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from futils import snapshot
+from src.futils import snapshot
 
 
 def test_empty_histogram():
