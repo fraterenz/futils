@@ -9,9 +9,6 @@ authors = [
   { name="Francesco Terenzi", email="fra.terenz1993@gmail.com" },
 ]
 description = "A small example package"
-dependencies = [
-  "numpy>=1.25",
-]
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
