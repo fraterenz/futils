@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "futils"
+version = "0.0.1"
+authors = [
+  { name="Francesco Terenzi", email="fra.terenz1993@gmail.com" },
+]
+description = "A small example package"
+dependencies = [
+  "numpy>=1.25",
+]
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/fraterenz/futils"
+
+[tool.pytest.ini_options]
+addopts = [
+  "--import-mode=importlib",
+]
