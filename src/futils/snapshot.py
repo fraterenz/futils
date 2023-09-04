@@ -7,7 +7,7 @@ import numpy as np
 from typing import Dict, List, NewType
 
 
-Distribution = NewType("Distribution", Dict[int, int])
+Distribution = NewType("Distribution", Dict[int, float])
 Histogram = NewType("Histogram", Dict[int, int])
 
 
@@ -24,7 +24,9 @@ class HistogramsUniformised:
 
     def create_x_array(self) -> np.ndarray:
         nb_histograms = self.y.shape[0]
-        return np.asarray(list(range(0, self.x_max + 1)) * nb_histograms, dtype=int).reshape((nb_histograms, self.x_max + 1) )
+        return np.asarray(
+            list(range(0, self.x_max + 1)) * nb_histograms, dtype=int
+        ).reshape((nb_histograms, self.x_max + 1))
 
 
 class Uniformise:
@@ -49,4 +51,31 @@ class Uniformise:
             np.array(uniformised_hists, dtype=int).reshape(
                 (len(histograms), upper_bound)
             ),
+        )
+
+    @staticmethod
+    def pooled_distribution(histograms: List[Histogram]) -> Distribution:
+        """Create an averaged distribution by pulling all the histograms from
+        different simulations together.
+        >>> from src.futils import snapshot
+        >>> histograms = [
+        ...     snapshot.Histogram({0: 2, 1: 2}),
+        ...     snapshot.Histogram({2: 1, 4: 1}),
+        ... ]
+        >>> distribution = snapshot.Uniformise.pooled_distribution(histograms)
+        >>> list(distribution.keys())
+        [0, 1, 2, 3, 4]
+        >>> [round(ele, 2) for ele in distribution.values()]
+        [0.33, 0.33, 0.17, 0.0, 0.17]
+        """
+        histograms_uniformed = Uniformise.uniformise_histograms(histograms)
+        tot_cells = histograms_uniformed.y.sum()
+        return Distribution(
+            {
+                k: val / tot_cells
+                for k, val in zip(
+                    range(0, histograms_uniformed.x_max + 1),
+                    histograms_uniformed.y.sum(axis=0),
+                )
+            }
         )
