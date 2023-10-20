@@ -48,7 +48,7 @@ def cdf_from_distribution(distr: Distribution) -> Tuple[np.ndarray, np.ndarray]:
     array([0.4, 0.8, 1. ])
     """
     ordered_distr = dict(sorted(distr.items()))
-    return np.array(list(ordered_distr.keys()), dtype=int), np.array(
+    return np.array(list(ordered_distr.keys())), np.array(
         np.cumsum(list(ordered_distr.values()), dtype=float), dtype=float
     )
 
