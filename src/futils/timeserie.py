@@ -7,46 +7,21 @@ import numpy as np
 import abc
 
 
-Dynamic = NewType("Dynamic", list)
+Timeserie = NewType("Timeserie", List[float])
 
 
-class SimulationOptions(metaclass=abc.ABCMeta):
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        return (
-            hasattr(subclass, "load_dynamic")
-            and callable(subclass.load_dynamic)
-            or NotImplemented
-        )
-
-    @abc.abstractclassmethod
-    def load_dynamic(self) -> Dynamic:
-        raise NotImplementedError
-
-
-class Timeserie(metaclass=abc.ABCMeta):
-    @classmethod
-    def __subclasshook__(cls, subclass):
-        return (
-            hasattr(subclass, "load_dynamic_from_file")
-            and callable(subclass.load_dynamic_from_file)
-            and hasattr(subclass, "load_dynamic_from_options")
-            and callable(subclass.load_dynamic_from_options)
-            or NotImplemented
-        )
-
-    @abc.abstractclassmethod
-    def load_dynamic_from_file(cls, file: Path) -> Dynamic:
-        raise NotImplementedError
-
-    @classmethod
-    def load_dynamic_from_options(cls, options: SimulationOptions) -> Dynamic:
-        return options.load_dynamic()
+def load_timeserie(file: Path) -> Timeserie:
+    timeserie = []
+    with open(file, "r") as f:
+        for ele in f.read().split(","):
+            if ele:
+                timeserie.append(float(ele))
+    return Timeserie(timeserie)
 
 
 class Uniformise:
     @staticmethod
-    def make_array(dynamics: List[Dynamic]) -> np.ndarray:
+    def make_array(dynamics: List[Timeserie]) -> np.ndarray:
         """Create an array of dynamics with shape `len(dynamics)` x t where t
         is the maximal number of entries found in `dynamics`, i.e. the slowest
         evolving dynamic from the list of dynamics.
