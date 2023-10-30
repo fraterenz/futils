@@ -13,9 +13,14 @@ Distribution = NewType("Distribution", Dict[int, float])
 Histogram = NewType("Histogram", Dict[int, int])
 
 
+def histogram_from_dict(my_dict: Dict[int, int]) -> Histogram:
+    sorted_dict = dict(sorted(my_dict.items()))
+    return Histogram({int(x): int(y) for x, y in sorted_dict.items()})
+
+
 def histogram_from_file(file: Path) -> Histogram:
     with open(file, "r") as f:
-        return Histogram({int(x): int(y) for x, y in json.load(f).items()})
+        return histogram_from_dict(json.load(f))
 
 
 def cdf_from_histogram(hist: Histogram) -> Tuple[np.ndarray, np.ndarray]:
