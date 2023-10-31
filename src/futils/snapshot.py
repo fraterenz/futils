@@ -143,3 +143,29 @@ class Uniformise:
                 )
             }
         )
+
+    @staticmethod
+    def pooled_histogram(histograms: List[Histogram]) -> Histogram:
+        """Create an averaged histogram by pulling all the histograms from
+        different simulations together without normalisation of the y axis.
+        >>> from src.futils import snapshot
+        >>> histograms = [
+        ...     snapshot.Histogram({0: 2, 1: 2, 5: 1}),
+        ...     snapshot.Histogram({2: 1, 4: 1, 5: 2}),
+        ... ]
+        >>> histrogram = snapshot.Uniformise.pooled_histogram(histograms)
+        >>> list(histrogram.keys())
+        [0, 1, 2, 3, 4, 5]
+        >>> list(histrogram.values())
+        [2, 2, 1, 0, 1, 3]
+        """
+        histograms_uniformed = Uniformise.uniformise_histograms(histograms)
+        return Histogram(
+            {
+                k: val
+                for k, val in zip(
+                    range(0, histograms_uniformed.x_max + 1),
+                    histograms_uniformed.y.sum(axis=0),
+                )
+            }
+        )
