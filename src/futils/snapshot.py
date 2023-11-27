@@ -77,20 +77,40 @@ def distribution_from_histogram(hist: Histogram) -> Distribution:
 
 class HistogramsUniformised:
     x_max: int
-    y: np.ndarray  # shape experiments x x_max
+    y: np.ndarray  # shape: nb_of_histograms x x_max
 
     def __init__(self, x_max: int, y: np.ndarray) -> None:
+        assert x_max == y.shape[1] - 1, f"{x_max} vs {y.shape[1] - 1}"
         self.x_max = x_max
         self.y = y
 
-    def make_distribution(self) -> Distribution:
-        raise NotImplementedError
+    def make_histograms(self) -> List[Histogram]:
+        """
+        >>> from src.futils import snapshot
+        >>> import numpy as np
+        >>> my_values = np.array([[1, 0, 3, 1], [0, 0, 1, 1]], dtype=int)
+        >>> uniformised_hists = snapshot.HistogramsUniformised(x_max=3, y=my_values)
+        >>> uniformised_hists.make_histograms()
+        [{0: 1, 1: 0, 2: 3, 3: 1}, {0: 0, 1: 0, 2: 1, 3: 1}]
+        """
+        histograms = []
+        for idx in range(self.get_nb_histograms()):
+            histograms.append(
+                {k: val for k, val in zip(self.create_x_keys(), self.y[idx, :])}
+            )
+        return histograms
+
+    def get_nb_histograms(self) -> int:
+        return self.y.shape[0]
+
+    def create_x_keys(self) -> List[int]:
+        return list(range(0, self.x_max + 1))
 
     def create_x_array(self) -> np.ndarray:
-        nb_histograms = self.y.shape[0]
-        return np.asarray(
-            list(range(0, self.x_max + 1)) * nb_histograms, dtype=int
-        ).reshape((nb_histograms, self.x_max + 1))
+        nb_histograms = self.get_nb_histograms()
+        return np.asarray(self.create_x_keys() * nb_histograms, dtype=int).reshape(
+            (nb_histograms, self.x_max + 1)
+        )
 
 
 class Uniformise:
