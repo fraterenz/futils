@@ -13,6 +13,18 @@ Distribution = NewType("Distribution", Dict[int, float])
 Histogram = NewType("Histogram", Dict[int, int])
 
 
+def array_from_hist(my_hist: Histogram) -> np.ndarray:
+    """
+    >>> from src.futils import snapshot
+    >>> my_keys = [1, 0, 3]
+    >>> my_values = [2, 2, 1]
+    >>> histogram = snapshot.histogram_from_dict({k: ele for k, ele in zip(my_keys, my_values)})
+    >>> snapshot.array_from_hist(histogram)
+    array([0, 0, 1, 1, 3])
+    """
+    return np.asarray([i for k, val in my_hist.items() for i in [k] * val], dtype=int)
+
+
 def histogram_from_dict(my_dict: Dict[int, int]) -> Histogram:
     return Histogram({int(x): int(y) for x, y in sorted(my_dict.items())})
 
