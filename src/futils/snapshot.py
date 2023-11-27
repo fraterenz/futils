@@ -14,8 +14,7 @@ Histogram = NewType("Histogram", Dict[int, int])
 
 
 def histogram_from_dict(my_dict: Dict[int, int]) -> Histogram:
-    sorted_dict = dict(sorted(my_dict.items()))
-    return Histogram({int(x): int(y) for x, y in sorted_dict.items()})
+    return Histogram({int(x): int(y) for x, y in sorted(my_dict.items())})
 
 
 def histogram_from_file(file: Path) -> Histogram:
