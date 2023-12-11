@@ -13,6 +13,26 @@ Distribution = NewType("Distribution", Dict[int, float])
 Histogram = NewType("Histogram", Dict[int, int])
 
 
+def hist_from_array(my_array: np.ndarray) -> Histogram:
+    """
+    >>> from src.futils import snapshot
+    >>> my_array = [0, 0, 10, 1, 2, 0]
+    >>> snapshot.hist_from_array(my_array)
+    {0: 3, 1: 1, 2: 1, 10: 1}
+    """
+    values, counts = np.unique(my_array, return_counts=True)
+    return Histogram({k: v for k, v in zip(values, counts)})
+
+
+def subsample_histogram(
+    my_hist: Histogram, nb_cells: int, seed: int | None = 42
+) -> np.ndarray:
+    assert nb_cells < sum(my_hist.values()), "found invalid number of cells `nb_cells`"
+    arr = array_from_hist(my_hist)
+    rng = np.random.default_rng(seed=seed)
+    return rng.choice(arr, nb_cells, replace=False)
+
+
 def array_from_hist(my_hist: Histogram) -> np.ndarray:
     """
     >>> from src.futils import snapshot
