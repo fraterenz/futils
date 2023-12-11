@@ -5,7 +5,7 @@ and the values are the number of individuals.
 """
 import numpy as np
 import json
-from typing import Dict, List, NewType, Tuple
+from typing import Dict, List, NewType, Tuple, Union
 from pathlib import Path
 
 
@@ -25,7 +25,7 @@ def hist_from_array(my_array: np.ndarray) -> Histogram:
 
 
 def subsample_histogram(
-    my_hist: Histogram, nb_cells: int, seed: int | None = 42
+    my_hist: Histogram, nb_cells: int, seed: Union[int, None] = 42
 ) -> np.ndarray:
     assert nb_cells < sum(my_hist.values()), "found invalid number of cells `nb_cells`"
     arr = array_from_hist(my_hist)
