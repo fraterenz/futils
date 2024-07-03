@@ -3,6 +3,7 @@ simulation at a certain timepoint.
 The histogram are stored as json files with keys being a quantity of interest
 and the values are the number of individuals.
 """
+
 import numpy as np
 import json
 from typing import Dict, List, NewType, Tuple, Union
