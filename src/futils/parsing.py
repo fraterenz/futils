@@ -27,7 +27,6 @@ def find_sample_size(path: Path) -> int:
     match_sample = re.compile(r"^(\d+)(cells)$", re.IGNORECASE)
     parts = path.parts
     for part in parts:
-        print(part)
         matched = match_sample.search(part)
         if matched:
             # assume the first (\d+)(cells) is the sample size
@@ -62,7 +61,10 @@ def parse_filename_into_dict(filename: Path) -> Dict[str, Union[int, float]]:
     for ele in filename_str:
         matched = match_nb.search(ele)
         if matched:
-            my_dict[matched.group(2)] = float(matched.group(1))
+            if matched.group(2) == "idx":
+                my_dict[matched.group(2)] = int(matched.group(1))
+            else:
+                my_dict[matched.group(2)] = float(matched.group(1))
         else:
             raise ValueError(
                 f"Syntax <NUMBER><VALUE>_ not respected in filename {filename}"
