@@ -7,9 +7,11 @@ Assume the file `myfile.myext` is saved as:
 """
 
 import re
+import pandas as pd
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, List, NewType, Union
 
+Parameters = NewType("Parameters", Dict[str, Union[int, float]])
 
 class SampleSizeIsZero(Exception):
     def __init__(self, message, error_code):
@@ -43,17 +45,17 @@ def find_sample_size(path: Path) -> int:
     )
 
 
-def parameters_from_path(path: Path) -> Dict[str, Union[int, float]]:
+def parameters_from_path(path: Path) -> Parameters:
     """The main method to use: take a path as input and returns a dict.
     The path must follow the convention:
     `/path/to/dir/{number}cells/{measurement}/myfile.myext`
     """
-    params_file = parse_filename_into_dict(path)
+    params_file = parameters_from_filename(path)
     params_file["cells"] = find_sample_size(path)
-    return params_file
+    return Parameters(params_file)
 
 
-def parse_filename_into_dict(filename: Path) -> Dict[str, Union[int, float]]:
+def parameters_from_filename(filename: Path) -> Parameters:
     match_nb = re.compile(r"(\d+\.?\d*)([a-z]+\d*)", re.IGNORECASE)
     filename_str = filename.stem
     filename_str = filename_str.replace("dot", ".").split("_")
@@ -69,4 +71,12 @@ def parse_filename_into_dict(filename: Path) -> Dict[str, Union[int, float]]:
             raise ValueError(
                 f"Syntax <NUMBER><VALUE>_ not respected in filename {filename}"
             )
-    return my_dict
+    return Parameters(my_dict)
+
+def params_into_dataframe(params: List[Parameters]) -> pd.DataFrame:
+    df = pd.DataFrame.from_records([param for param in params])
+    df.idx = df.idx.astype(int)
+    df.cells = df.cells.astype(int)
+    df["samples"] = df["samples"].astype(int)
+    return df
+
