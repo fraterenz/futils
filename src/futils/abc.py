@@ -40,7 +40,7 @@ def filter_runs_stat(
     idx = summary.loc[
         summary[stat_name] <= summary[stat_name].quantile(quantile), "idx"
     ]
-    idx_set = set(idx.idx.unique())
+    idx_set = set(idx.unique())
     assert idx.shape[0] == len(idx_set)
     return PosteriorIdx(idx_set)
 
