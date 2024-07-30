@@ -3,9 +3,10 @@ import numpy as np
 from . import snapshot
 from abc import ABC, abstractmethod
 from scipy import stats
-from typing import List, NewType, Tuple
+from typing import List, NewType, Set, Tuple
 
 
+PosteriorIdx = NewType("PosteriorIdx", Set[int])
 Posterior = NewType("Posterior", pd.Series)
 
 
@@ -18,13 +19,30 @@ class Stat(ABC):
             and callable(subclass.distance)
             or NotImplemented
         )
+
     @abstractmethod
-    def distance(self, target: snapshot.Histogram, simulation: snapshot.Histogram) -> float:
+    def distance(
+        self, target: snapshot.Histogram, simulation: snapshot.Histogram
+    ) -> float:
         raise NotImplementedError
 
 
-
 Stats = NewType("Stats", List[Stat])
+
+
+def filter_runs_stat(
+    summary: pd.DataFrame, quantile: float, stat: Stat
+) -> PosteriorIdx:
+    stat_name = stat.__class__.__name__
+    assert stat_name in set(
+        summary.columns
+    ), f"metric {stat_name} not found in df with cols {set(summary.columns)}"
+    idx = summary.loc[
+        summary[stat_name] <= summary[stat_name].quantile(quantile), "idx"
+    ]
+    idx_set = set(idx.idx.unique())
+    assert idx.shape[0] == len(idx_set)
+    return PosteriorIdx(idx_set)
 
 
 @Stat.register
@@ -47,9 +65,7 @@ class Wasserstein:
         u_values, u_weights = list(target_uniformised.keys()), list(
             target_uniformised.values()
         )
-        return stats.wasserstein_distance(
-            u_values, v_values, u_weights, v_weights
-        )
+        return stats.wasserstein_distance(u_values, v_values, u_weights, v_weights)
 
 
 def round_estimates(estimate: float, significant: str) -> str:
@@ -120,7 +136,7 @@ def plot_posterior(
     color,
     fancy: bool,
     legend: bool = False,
-    xlim = None
+    xlim=None,
 ):
     # https://matplotlib.org/stable/gallery/lines_bars_and_markers/stairs_demo.html
     values = bins.compute_hist(posterior)
