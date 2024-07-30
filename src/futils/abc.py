@@ -11,7 +11,6 @@ Posterior = NewType("Posterior", pd.Series)
 
 # https://realpython.com/python-interface/
 class Stat(ABC):
-    @abstractmethod
     @classmethod
     def __subclasshook__(cls, subclass):
         return (
