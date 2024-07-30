@@ -13,6 +13,7 @@ from typing import Dict, List, NewType, Union
 
 Parameters = NewType("Parameters", Dict[str, Union[int, float]])
 
+
 class SampleSizeIsZero(Exception):
     def __init__(self, message, error_code):
         super().__init__(message)
@@ -73,10 +74,10 @@ def parameters_from_filename(filename: Path) -> Parameters:
             )
     return Parameters(my_dict)
 
+
 def params_into_dataframe(params: List[Parameters]) -> pd.DataFrame:
     df = pd.DataFrame.from_records([param for param in params])
     df.idx = df.idx.astype(int)
     df.cells = df.cells.astype(int)
     df["samples"] = df["samples"].astype(int)
     return df
-
