@@ -19,8 +19,7 @@ class Stat(ABC):
             or NotImplemented
         )
     @abstractmethod
-    @classmethod
-    def distance(cls, target: snapshot.Histogram, simulation: snapshot.Histogram) -> float:
+    def distance(self, target: snapshot.Histogram, simulation: snapshot.Histogram) -> float:
         raise NotImplementedError
 
 
