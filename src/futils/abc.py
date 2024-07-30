@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
+from . import snapshot
 from abc import ABC, abstractmethod
+from scipy import stats
 from typing import List, NewType, Tuple
 
 
@@ -17,9 +19,39 @@ class Stat(ABC):
             and callable(subclass.distance)
             or NotImplemented
         )
+    @abstractmethod
+    @classmethod
+    def distance(cls, target: snapshot.Histogram, simulation: snapshot.Histogram) -> float:
+        raise NotImplementedError
+
 
 
 Stats = NewType("Stats", List[Stat])
+
+
+@Stat.register
+class Wasserstein:
+    def __init__(self) -> None:
+        super().__init__()
+
+    def distance(self, target: snapshot.Histogram, sim: snapshot.Histogram) -> float:
+        # uniformise such that they have the same support which is required by
+        # the wasserstein metric
+        target_uniformised, sim_uniformised = snapshot.Uniformise.uniformise_histograms(
+            [target, sim]
+        ).make_histograms()
+
+        assert len(target_uniformised) == len(sim_uniformised)
+
+        v_values, v_weights = list(sim_uniformised.keys()), list(
+            sim_uniformised.values()
+        )
+        u_values, u_weights = list(target_uniformised.keys()), list(
+            target_uniformised.values()
+        )
+        return stats.wasserstein_distance(
+            u_values, v_values, u_weights, v_weights
+        )
 
 
 def round_estimates(estimate: float, significant: str) -> str:

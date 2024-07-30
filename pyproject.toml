@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "futils"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="Francesco Terenzi", email="fra.terenz1993@gmail.com" },
 ]
@@ -17,6 +17,7 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
+  "scipy",
   "pandas",
   "numpy>=1.25"
 ]
