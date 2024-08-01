@@ -114,8 +114,8 @@ class Bin:
         self.bin = bin_
         self.bin_distance = (self.bin[1] - self.bin[0]) / 2
 
-    def compute_hist(self, posterior: Posterior) -> np.ndarray:
-        values, _ = np.histogram(posterior, bins=self.bin, density=True)
+    def compute_hist(self, posterior: Posterior, density: bool = True) -> np.ndarray:
+        values, _ = np.histogram(posterior, bins=self.bin, density=density)
         return values
 
     def compute_estimate(self, posterior: Posterior) -> Estimate:
