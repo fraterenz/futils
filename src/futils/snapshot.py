@@ -26,11 +26,12 @@ def hist_from_array(my_array: np.ndarray) -> Histogram:
 
 
 def subsample_histogram(
-    my_hist: Histogram, nb_cells: int, seed: Union[int, None] = 42
+    my_hist: Histogram, nb_cells: int, rng: Union[np.random.Generator, None] = None,
 ) -> np.ndarray:
     assert nb_cells < sum(my_hist.values()), "found invalid number of cells `nb_cells`"
     arr = array_from_hist(my_hist)
-    rng = np.random.default_rng(seed=seed)
+    if not rng:
+        rng = np.random.default_rng()
     return rng.choice(arr, nb_cells, replace=False)
 
 
