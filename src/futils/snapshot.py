@@ -48,7 +48,7 @@ def array_from_hist(my_hist: Histogram) -> np.ndarray:
 
 
 def histogram_from_dict(my_dict: Dict[int, int]) -> Histogram:
-    return Histogram({int(x): int(y) for x, y in sorted(my_dict.items())})
+    return Histogram(dict(sorted({int(k): int(v) for k, v in my_dict.items()}.items())))
 
 
 def histogram_from_file(file: Path) -> Histogram:
