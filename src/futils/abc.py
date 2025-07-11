@@ -34,9 +34,9 @@ def filter_runs_stat(
     summary: pd.DataFrame, quantile: float, stat: Stat
 ) -> PosteriorIdx:
     stat_name = stat.__class__.__name__
-    assert stat_name in set(
-        summary.columns
-    ), f"metric {stat_name} not found in df with cols {set(summary.columns)}"
+    assert stat_name in set(summary.columns), (
+        f"metric {stat_name} not found in df with cols {set(summary.columns)}"
+    )
     idx = summary.loc[
         summary[stat_name] <= summary[stat_name].quantile(quantile), "idx"
     ]
@@ -59,11 +59,13 @@ class Wasserstein:
 
         assert len(target_uniformised) == len(sim_uniformised)
 
-        v_values, v_weights = list(sim_uniformised.keys()), list(
-            sim_uniformised.values()
+        v_values, v_weights = (
+            list(sim_uniformised.keys()),
+            list(sim_uniformised.values()),
         )
-        u_values, u_weights = list(target_uniformised.keys()), list(
-            target_uniformised.values()
+        u_values, u_weights = (
+            list(target_uniformised.keys()),
+            list(target_uniformised.values()),
         )
         return stats.wasserstein_distance(u_values, v_values, u_weights, v_weights)
 
@@ -100,10 +102,13 @@ class Estimate:
 
     def to_string(self, precision: str) -> str:
         point_estimate = round_estimates(self.point_estimate, precision)
-        interval = round_estimates(
-            self.point_estimate - self.credible_interval_90[0], precision
-        ), round_estimates(
-            self.credible_interval_90[1] - self.point_estimate, precision
+        interval = (
+            round_estimates(
+                self.point_estimate - self.credible_interval_90[0], precision
+            ),
+            round_estimates(
+                self.credible_interval_90[1] - self.point_estimate, precision
+            ),
         )
         return f"{point_estimate}^{{+{interval[1]}}}_{{-{interval[0]}}}"
 

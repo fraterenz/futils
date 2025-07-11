@@ -1,6 +1,6 @@
 import pytest
 import numpy as np
-from src.futils import timeserie
+from futils import timeserie
 
 
 def test_empty_histogram():
