@@ -16,17 +16,19 @@ Histogram = NewType("Histogram", Dict[int, int])
 
 def hist_from_array(my_array: np.ndarray) -> Histogram:
     """
-    >>> from src.futils import snapshot
+    >>> from futils import snapshot
     >>> my_array = [0, 0, 10, 1, 2, 0]
     >>> snapshot.hist_from_array(my_array)
-    {0: 3, 1: 1, 2: 1, 10: 1}
+    {np.int64(0): np.int64(3), np.int64(1): np.int64(1), np.int64(2): np.int64(1), np.int64(10): np.int64(1)}
     """
     values, counts = np.unique(my_array, return_counts=True)
     return Histogram({k: v for k, v in zip(values, counts)})
 
 
 def subsample_histogram(
-    my_hist: Histogram, nb_cells: int, rng: Union[np.random.Generator, None] = None,
+    my_hist: Histogram,
+    nb_cells: int,
+    rng: Union[np.random.Generator, None] = None,
 ) -> np.ndarray:
     assert nb_cells < sum(my_hist.values()), "found invalid number of cells `nb_cells`"
     arr = array_from_hist(my_hist)
@@ -37,7 +39,7 @@ def subsample_histogram(
 
 def array_from_hist(my_hist: Histogram) -> np.ndarray:
     """
-    >>> from src.futils import snapshot
+    >>> from futils import snapshot
     >>> my_keys = [1, 0, 3]
     >>> my_values = [2, 2, 1]
     >>> histogram = snapshot.histogram_from_dict({k: ele for k, ele in zip(my_keys, my_values)})
@@ -58,7 +60,7 @@ def histogram_from_file(file: Path) -> Histogram:
 
 def cdf_from_histogram(hist: Histogram) -> Tuple[np.ndarray, np.ndarray]:
     """
-    >>> from src.futils import snapshot
+    >>> from futils import snapshot
     >>> my_keys = [1, 0, 3]
     >>> my_values = [2, 2, 1]
     >>> histogram = snapshot.Histogram({k: ele for k, ele in zip(my_keys, my_values)})
@@ -75,7 +77,7 @@ def cdf_from_histogram(hist: Histogram) -> Tuple[np.ndarray, np.ndarray]:
 def cdf_from_distribution(distr: Distribution) -> Tuple[np.ndarray, np.ndarray]:
     """Return the x-axis (all the possible states) and the cumulative
     distribution (y-axis)
-    >>> from src.futils import snapshot
+    >>> from futils import snapshot
     >>> my_keys = [1, 0, 3]
     >>> my_values = [2, 2, 1]
     >>> distr = snapshot.Distribution({k: ele/5 for k, ele in zip(my_keys, my_values)})
@@ -93,7 +95,7 @@ def cdf_from_distribution(distr: Distribution) -> Tuple[np.ndarray, np.ndarray]:
 
 def distribution_from_histogram(hist: Histogram) -> Distribution:
     """
-    >>> from src.futils import snapshot
+    >>> from futils import snapshot
     >>> my_keys = [0, 1, 3]
     >>> my_values = [2, 2, 1]
     >>> histogram = snapshot.Histogram({k: ele for k, ele in zip(my_keys, my_values)})
@@ -119,12 +121,12 @@ class HistogramsUniformised:
 
     def make_histograms(self) -> List[Histogram]:
         """
-        >>> from src.futils import snapshot
+        >>> from futils import snapshot
         >>> import numpy as np
         >>> my_values = np.array([[1, 0, 3, 1], [0, 0, 1, 1]], dtype=int)
         >>> uniformised_hists = snapshot.HistogramsUniformised(x_max=3, y=my_values)
         >>> uniformised_hists.make_histograms()
-        [{0: 1, 1: 0, 2: 3, 3: 1}, {0: 0, 1: 0, 2: 1, 3: 1}]
+        [{0: np.int64(1), 1: np.int64(0), 2: np.int64(3), 3: np.int64(1)}, {0: np.int64(0), 1: np.int64(0), 2: np.int64(1), 3: np.int64(1)}]
         """
         histograms = []
         for idx in range(self.get_nb_histograms()):
@@ -174,7 +176,7 @@ class Uniformise:
     def pooled_distribution(histograms: List[Histogram]) -> Distribution:
         """Create an averaged distribution by pulling all the histograms from
         different simulations together.
-        >>> from src.futils import snapshot
+        >>> from futils import snapshot
         >>> histograms = [
         ...     snapshot.Histogram({0: 2, 1: 2}),
         ...     snapshot.Histogram({2: 1, 4: 1}),
@@ -183,7 +185,7 @@ class Uniformise:
         >>> list(distribution.keys())
         [0, 1, 2, 3, 4]
         >>> [round(ele, 2) for ele in distribution.values()]
-        [0.33, 0.33, 0.17, 0.0, 0.17]
+        [np.float64(0.33), np.float64(0.33), np.float64(0.17), np.float64(0.0), np.float64(0.17)]
         """
         histograms_uniformed = Uniformise.uniformise_histograms(histograms)
         tot_cells = histograms_uniformed.y.sum()
@@ -201,7 +203,7 @@ class Uniformise:
     def pooled_histogram(histograms: List[Histogram]) -> Histogram:
         """Create an averaged histogram by pulling all the histograms from
         different simulations together without normalisation of the y axis.
-        >>> from src.futils import snapshot
+        >>> from futils import snapshot
         >>> histograms = [
         ...     snapshot.Histogram({0: 2, 1: 2, 5: 1}),
         ...     snapshot.Histogram({2: 1, 4: 1, 5: 2}),
@@ -210,7 +212,7 @@ class Uniformise:
         >>> list(histrogram.keys())
         [0, 1, 2, 3, 4, 5]
         >>> list(histrogram.values())
-        [2, 2, 1, 0, 1, 3]
+        [np.int64(2), np.int64(2), np.int64(1), np.int64(0), np.int64(1), np.int64(3)]
         """
         histograms_uniformed = Uniformise.uniformise_histograms(histograms)
         return Histogram(

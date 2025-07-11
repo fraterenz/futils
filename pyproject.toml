@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "futils"
-version = "0.0.14"
+version = "0.0.15"
 authors = [
   { name="Francesco Terenzi", email="fra.terenz1993@gmail.com" },
 ]
 description = "Utils for processing data generated from stochastic simulations"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -29,4 +29,9 @@ dependencies = [
 addopts = [
   "--import-mode=importlib",
   "--doctest-modules"
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
 ]
